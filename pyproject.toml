@@ -1,0 +1,22 @@
+[project]
+name = "grtfood-backend"
+version = "2.0.0"
+description = "GRT Food - Sistema de pedidos de almoço (Backend FastAPI)"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.115",
+    "uvicorn[standard]>=0.30",
+    "sqlmodel>=0.0.22",
+    "pydantic-settings>=2.0",
+    "apscheduler>=3.10,<4.0",
+    "jinja2>=3.1",
+    "python-dotenv>=1.0",
+    "pandas>=2.0",
+    "aiosqlite>=0.20",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[project.scripts]
+seed = "seed:main"
