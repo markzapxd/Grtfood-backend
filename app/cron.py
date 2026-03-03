@@ -1,7 +1,7 @@
 """Agendamento de tarefas — abertura e fechamento automático do cardápio."""
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.triggers.cron import CronTrigger
 
 from app.config import settings
@@ -27,7 +27,7 @@ def init_scheduler(abre_cardapio_func, fecha_cardapio_func) -> AsyncIOScheduler:
     global scheduler
 
     jobstores = {
-        "default": SQLAlchemyJobStore(url="sqlite:///./data/jobs.sqlite")
+        "default": MemoryJobStore()
     }
     job_defaults = {
         "coalesce": False,
