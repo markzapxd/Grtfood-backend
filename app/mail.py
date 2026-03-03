@@ -1,4 +1,4 @@
-"""Envio de e-mails via SMTP com templates Jinja2."""
+"""Envio de e-mails via SMTP com templates Jinja2"""
 
 import smtplib
 from datetime import datetime
