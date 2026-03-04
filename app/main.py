@@ -522,42 +522,30 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
 
 # ═══════════════════════════════════════════════════════════
-#  FRONTEND STATIC FILES / SPA CATCH-ALL
+#  FRONTEND STATIC FILES
 # ═══════════════════════════════════════════════════════════
 from fastapi.staticfiles import StaticFiles
-from fastapi import Request
 
 frontend_path = Path(__file__).parent / "static"
 
 if frontend_path.exists():
-    # Monta a pasta de recursos do next
-    _next_path = frontend_path / "_next"
-    if _next_path.exists():
-        app.mount("/_next", StaticFiles(directory=_next_path), name="next_assets")
+    @app.get("/")
+    async def serve_index():
+        index = frontend_path / "index.html"
+        if index.is_file():
+            return FileResponse(index)
+        raise HTTPException(status_code=404)
 
     @app.get("/{full_path:path}")
     async def serve_frontend(full_path: str):
-        # Protege rotas de API
-        if full_path.startswith("api/"):
-            raise HTTPException(status_code=404, detail="API route not found")
-        
+        if full_path.startswith("api/") or full_path == "ws":
+            raise HTTPException(status_code=404, detail="Not found")
         file_path = frontend_path / full_path
-        if full_path and file_path.is_file():
+        if file_path.is_file():
             return FileResponse(file_path)
-
-        html_path = frontend_path / f"{full_path}.html"
-        if full_path and html_path.is_file():
-            return FileResponse(html_path)
-
-        index_path = frontend_path / "index.html"
-        if index_path.is_file():
-            return FileResponse(index_path)
-
-        raise HTTPException(status_code=404, detail="Frontend route not found")
+        return FileResponse(frontend_path / "index.html")
 else:
     @app.get("/")
     def root_fallback():
-        return {"status": "ok", "message": "API está rodando, mas a pasta 'static' do frontend não foi encontrada."}
-
-
+        return {"status": "ok", "message": "API rodando. Pasta static não encontrada."}
 
