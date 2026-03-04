@@ -45,19 +45,37 @@ def enviar_email(conteudo_html: str) -> list[str]:
     msg["From"] = settings.mail_smtp_user
     msg["To"] = destinatarios
 
+    etapa = "init"
     try:
+        print(
+            "[MAIL] Iniciando envio SMTP "
+            f"server={settings.mail_smtp_server} port={settings.mail_smtp_port} "
+            f"user={settings.mail_smtp_user} destinatarios={len(destinatarios)}"
+        )
+
+        etapa = "connect"
         s = smtplib.SMTP(
             settings.mail_smtp_server,
             port=settings.mail_smtp_port,
             timeout=SMTP_TIMEOUT_SECONDS,
         )
+
+        etapa = "ehlo"
         s.ehlo()
+
+        etapa = "starttls"
         s.starttls()
+
+        etapa = "login"
         s.login(settings.mail_smtp_user, settings.mail_smtp_password)
+
+        etapa = "send_message"
         s.send_message(msg)
+
+        etapa = "quit"
         s.quit()
         print(f"[MAIL] E-mail enviado para {destinatarios}")
         return destinatarios
     except Exception as e:
-        print(f"[MAIL] Erro ao enviar e-mail: {e}")
+        print(f"[MAIL] Erro na etapa '{etapa}': {e}")
         raise RuntimeError(f"Falha SMTP: {e}") from e
