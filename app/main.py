@@ -496,10 +496,10 @@ def _gerar_relatorio_mensal(
 #  ROTA — TESTE DE E-MAIL
 # ═══════════════════════════════════════════════════════════
 
-@app.get("/api/mail/test")
-def teste_email(session: Session = Depends(get_session)):
-    """Envia e-mail de teste com os pedidos do dia."""
+def _enviar_email_debug(session: Session) -> dict[str, str]:
+    """Monta e envia e-mail de debug com pedidos do dia."""
     from app.config import settings as _s
+
     if not _s.mail_smtp_server:
         raise HTTPException(status_code=400, detail="SMTP não configurado (MAIL_SMTP_SERVER vazio).")
     if not _s.mail_to:
@@ -512,7 +512,20 @@ def teste_email(session: Session = Depends(get_session)):
         enviados = enviar_email(html)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao enviar: {e}")
+
     return {"status": "ok", "message": f"E-mail enviado para {';'.join(enviados)}"}
+
+
+@app.post("/api/mail/debug")
+def enviar_email_debug(session: Session = Depends(get_session)):
+    """Envia e-mail de debug com os pedidos do dia para o destinatário configurado."""
+    return _enviar_email_debug(session)
+
+
+@app.get("/api/mail/test")
+def teste_email(session: Session = Depends(get_session)):
+    """Compatibilidade: rota antiga de teste de e-mail."""
+    return _enviar_email_debug(session)
 
 
 # ═══════════════════════════════════════════════════════════
