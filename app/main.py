@@ -219,8 +219,13 @@ async def fecha_cardapio():
 
 
 # ═══════════════════════════════════════════════════════════
-#  ROTAS — USUÁRIOS
+#  ROTAS — SAÚDE DA API E USUÁRIOS
 # ═══════════════════════════════════════════════════════════
+
+@app.get("/")
+def health_check():
+    """Health check root route."""
+    return {"status": "ok", "message": "GRT Food API is running"}
 
 @app.get("/api/usuarios", response_model=list[UsuarioResponse])
 def listar_usuarios(session: Session = Depends(get_session)):
