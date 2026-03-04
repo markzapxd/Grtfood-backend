@@ -522,12 +522,6 @@ def enviar_email_debug(session: Session = Depends(get_session)):
     return _enviar_email_debug(session)
 
 
-@app.get("/api/mail/debug")
-def enviar_email_debug_get(session: Session = Depends(get_session)):
-    """Envia e-mail de debug via GET para facilitar testes manuais no navegador."""
-    return _enviar_email_debug(session)
-
-
 @app.get("/api/mail/test")
 def teste_email(session: Session = Depends(get_session)):
     """Compatibilidade: rota antiga de teste de e-mail."""
