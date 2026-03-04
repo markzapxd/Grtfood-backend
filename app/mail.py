@@ -1,5 +1,6 @@
 """Envio de e-mails via SMTP com templates Jinja2"""
 
+import socket
 import smtplib
 from datetime import datetime
 from email.message import EmailMessage
@@ -53,24 +54,36 @@ def enviar_email(conteudo_html: str) -> list[str]:
             f"user={settings.mail_smtp_user} destinatarios={len(destinatarios)}"
         )
 
+        etapa = "preflight_connect"
+        with socket.create_connection(
+            (settings.mail_smtp_server, settings.mail_smtp_port),
+            timeout=SMTP_TIMEOUT_SECONDS,
+        ):
+            print("[MAIL] Preflight TCP OK")
+
         etapa = "connect"
         s = smtplib.SMTP(
             settings.mail_smtp_server,
             port=settings.mail_smtp_port,
             timeout=SMTP_TIMEOUT_SECONDS,
         )
+        print("[MAIL] SMTP connect OK")
 
         etapa = "ehlo"
         s.ehlo()
+        print("[MAIL] EHLO OK")
 
         etapa = "starttls"
         s.starttls()
+        print("[MAIL] STARTTLS OK")
 
         etapa = "login"
         s.login(settings.mail_smtp_user, settings.mail_smtp_password)
+        print("[MAIL] LOGIN OK")
 
         etapa = "send_message"
         s.send_message(msg)
+        print("[MAIL] SEND OK")
 
         etapa = "quit"
         s.quit()
