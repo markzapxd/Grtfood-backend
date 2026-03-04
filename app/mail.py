@@ -9,6 +9,8 @@ from jinja2 import Environment, FileSystemLoader
 
 from app.config import settings
 
+SMTP_TIMEOUT_SECONDS = 15
+
 # Carrega templates Jinja2 do diretório templates/
 _template_dir = Path(__file__).parent / "templates"
 _jinja_env = Environment(loader=FileSystemLoader(str(_template_dir)), autoescape=True)
@@ -44,7 +46,11 @@ def enviar_email(conteudo_html: str) -> list[str]:
     msg["To"] = destinatarios
 
     try:
-        s = smtplib.SMTP(settings.mail_smtp_server, port=settings.mail_smtp_port)
+        s = smtplib.SMTP(
+            settings.mail_smtp_server,
+            port=settings.mail_smtp_port,
+            timeout=SMTP_TIMEOUT_SECONDS,
+        )
         s.ehlo()
         s.starttls()
         s.login(settings.mail_smtp_user, settings.mail_smtp_password)

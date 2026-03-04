@@ -548,32 +548,3 @@ async def websocket_endpoint(websocket: WebSocket):
         manager.disconnect(websocket)
     except Exception:
         manager.disconnect(websocket)
-
-# ═══════════════════════════════════════════════════════════
-#  FRONTEND STATIC FILES
-# ═══════════════════════════════════════════════════════════
-from fastapi.staticfiles import StaticFiles
-
-frontend_path = Path(__file__).parent / "static"
-
-if frontend_path.exists():
-    @app.get("/")
-    async def serve_index():
-        index = frontend_path / "index.html"
-        if index.is_file():
-            return FileResponse(index)
-        raise HTTPException(status_code=404)
-
-    @app.get("/{full_path:path}")
-    async def serve_frontend(full_path: str):
-        if full_path.startswith("api/") or full_path == "ws":
-            raise HTTPException(status_code=404, detail="Not found")
-        file_path = frontend_path / full_path
-        if file_path.is_file():
-            return FileResponse(file_path)
-        return FileResponse(frontend_path / "index.html")
-else:
-    @app.get("/")
-    def root_fallback():
-        return {"status": "ok", "message": "API rodando. Pasta static não encontrada."}
-
