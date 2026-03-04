@@ -44,9 +44,20 @@ estado: str = "Aberto"
 async def lifespan(app: FastAPI):
     """Inicializa banco e scheduler no startup."""
     global estado
-    create_db_and_tables()
-    estado = calcular_estado_cardapio()
-    init_scheduler(abre_cardapio, fecha_cardapio)
+    
+    try:
+        create_db_and_tables()
+        print("Banco de dados conectado e tabelas sincronizadas!")
+    except Exception as e:
+        print(f"ERRO CRÍTICO AO CONECTAR NO BANCO DE DADOS: {e}")
+
+    try:
+        estado = calcular_estado_cardapio()
+        init_scheduler(abre_cardapio, fecha_cardapio)
+        print("Scheduler iniciado com sucesso!")
+    except Exception as e:
+        print(f"ERRO AO INICIAR O SCHEDULER: {e}")
+
     yield
 
 
