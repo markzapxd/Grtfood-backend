@@ -17,20 +17,12 @@ _url = settings.database_url
 if _url.startswith("postgres://"):
     _url = _url.replace("postgres://", "postgresql://", 1)
 
-_is_sqlite = _url.startswith("sqlite")
+_is_sqlite = False
 
-# Configuração do engine dependendo do banco
-_connect_args: dict = {}
-if _is_sqlite:
-    # Garante que o diretório data/ exista para SQLite
-    _db_path = _url.replace("sqlite:///", "")
-    os.makedirs(os.path.dirname(_db_path) or ".", exist_ok=True)
-    _connect_args = {"check_same_thread": False}
-
+# Configuração do engine (exclusivo para PostgreSQL)
 engine = create_engine(
     _url,
     echo=settings.development,
-    connect_args=_connect_args,
 )
 
 

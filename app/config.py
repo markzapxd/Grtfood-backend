@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     mail_smtp_password: str = ""
     mail_to: str = ""
 
-    # Banco de dados
-    database_url: str = "sqlite:///./data/food.db"
+    # Banco de dados (PostgreSQL no Railway)
+    database_url: str = "postgresql://postgres:xLFTqjkaPQSoIwIYLpWxSKZICgDpenet@gondola.proxy.rlwy.net:28480/railway"
 
     # CORS
     cors_origins: str = "http://localhost:3000"
