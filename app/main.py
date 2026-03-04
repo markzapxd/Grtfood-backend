@@ -493,11 +493,20 @@ def _gerar_relatorio_mensal(
 @app.get("/api/mail/test")
 def teste_email(session: Session = Depends(get_session)):
     """Envia e-mail de teste com os pedidos do dia."""
+    from app.config import settings as _s
+    if not _s.mail_smtp_server:
+        raise HTTPException(status_code=400, detail="SMTP não configurado (MAIL_SMTP_SERVER vazio).")
+    if not _s.mail_to:
+        raise HTTPException(status_code=400, detail="Destinatário não configurado (MAIL_TO vazio).")
+
     pedidos = processar_pedidos(session)
     resumo = agrupar_pedidos(pedidos)
     html = renderizar_email_pedidos(pedidos, resumo)
-    enviar_email(html)
-    return {"status": "ok", "message": "E-mail enviado (se configurado)."}
+    try:
+        enviar_email(html)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro ao enviar: {e}")
+    return {"status": "ok", "message": f"E-mail enviado para {_s.mail_to}"}
 
 
 # ═══════════════════════════════════════════════════════════
