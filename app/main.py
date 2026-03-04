@@ -241,15 +241,19 @@ def health_check():
 
 @app.get("/api/usuarios", response_model=list[UsuarioResponse])
 def listar_usuarios(session: Session = Depends(get_session)):
-    """Lista todos os usuários ordenados por nome."""
-    statement = select(Usuario).order_by(col(Usuario.nome).asc())
+    """Lista usuários ativos ordenados por nome."""
+    statement = (
+        select(Usuario)
+        .where(Usuario.ativo == True)
+        .order_by(col(Usuario.nome).asc())
+    )
     return session.exec(statement).all()
 
 
 @app.post("/api/usuarios", response_model=UsuarioResponse, status_code=201)
 def criar_usuario(payload: UsuarioCreate, session: Session = Depends(get_session)):
     """Cria um novo usuário."""
-    usuario = Usuario(nome=payload.nome)
+    usuario = Usuario(nome=payload.nome, ativo=payload.ativo)
     session.add(usuario)
     session.commit()
     session.refresh(usuario)
@@ -327,6 +331,8 @@ async def criar_pedido(
     usuario = session.get(Usuario, payload.usuario_id)
     if not usuario:
         raise HTTPException(status_code=404, detail="Usuário não encontrado.")
+    if not usuario.ativo:
+        raise HTTPException(status_code=403, detail="Usuário inativo não pode realizar pedidos.")
 
     pedido = Pedido(
         usuario_id=payload.usuario_id,
@@ -503,10 +509,10 @@ def teste_email(session: Session = Depends(get_session)):
     resumo = agrupar_pedidos(pedidos)
     html = renderizar_email_pedidos(pedidos, resumo)
     try:
-        enviar_email(html)
+        enviados = enviar_email(html)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao enviar: {e}")
-    return {"status": "ok", "message": f"E-mail enviado para {_s.mail_to}"}
+    return {"status": "ok", "message": f"E-mail enviado para {';'.join(enviados)}"}
 
 
 # ═══════════════════════════════════════════════════════════

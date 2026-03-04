@@ -11,6 +11,7 @@ class Usuario(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     nome: str = Field(unique=True, index=True)
+    ativo: bool = Field(default=True, index=True)
 
 
 class Cardapio(SQLModel, table=True):

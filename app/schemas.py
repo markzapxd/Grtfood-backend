@@ -74,12 +74,14 @@ class UsuarioResponse(BaseModel):
 
     id: int
     nome: str
+    ativo: bool
 
 
 class UsuarioCreate(BaseModel):
     """Criação de um novo usuário."""
 
     nome: str
+    ativo: bool = True
 
 
 # ─── Estado ─────────────────────────────────────────────────

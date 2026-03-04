@@ -25,16 +25,14 @@ def renderizar_email_pedidos(pedidos: list[dict], resumo: list[dict]) -> str:
     )
 
 
-def enviar_email(conteudo_html: str) -> None:
-    """Envia e-mail HTML via SMTP."""
+def enviar_email(conteudo_html: str) -> list[str]:
+    """Envia e-mail HTML via SMTP e retorna destinatários enviados."""
     if not settings.mail_smtp_server:
-        print("[MAIL] Servidor SMTP não configurado, e-mail não enviado.")
-        return
+        raise RuntimeError("Servidor SMTP não configurado (MAIL_SMTP_SERVER vazio).")
 
     destinatarios = [d.strip() for d in settings.mail_to.split(";") if d.strip()]
     if not destinatarios:
-        print("[MAIL] Nenhum destinatário configurado.")
-        return
+        raise RuntimeError("Nenhum destinatário configurado (MAIL_TO vazio).")
 
     msg = EmailMessage()
     msg.add_header("Content-Type", "text/html; charset=UTF-8")
@@ -53,5 +51,7 @@ def enviar_email(conteudo_html: str) -> None:
         s.send_message(msg)
         s.quit()
         print(f"[MAIL] E-mail enviado para {destinatarios}")
+        return destinatarios
     except Exception as e:
         print(f"[MAIL] Erro ao enviar e-mail: {e}")
+        raise RuntimeError(f"Falha SMTP: {e}") from e

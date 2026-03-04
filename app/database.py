@@ -1,11 +1,7 @@
-"""Conexão e inicialização do banco de dados via SQLModel.
-
-Suporta SQLite (desenvolvimento local) e PostgreSQL (Railway/produção).
-O tipo de banco é detectado automaticamente pela DATABASE_URL.
-"""
 
 import os
 
+from sqlalchemy import inspect, text
 from sqlmodel import SQLModel, Session, create_engine
 
 from app.config import settings
@@ -29,6 +25,20 @@ engine = create_engine(
 def create_db_and_tables() -> None:
     """Cria todas as tabelas definidas nos modelos SQLModel."""
     SQLModel.metadata.create_all(engine)
+
+    inspector = inspect(engine)
+    tabelas = inspector.get_table_names()
+    if "usuario" not in tabelas:
+        return
+
+    colunas = {c["name"] for c in inspector.get_columns("usuario")}
+    if "ativo" in colunas:
+        return
+
+    with engine.begin() as conn:
+        conn.execute(
+            text("ALTER TABLE usuario ADD COLUMN ativo BOOLEAN NOT NULL DEFAULT TRUE")
+        )
 
 
 def get_session():
