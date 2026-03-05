@@ -19,7 +19,7 @@ _jinja_env = Environment(loader=FileSystemLoader(str(_template_dir)), autoescape
 
 def renderizar_email_pedidos(pedidos: list[dict], resumo: list[dict]) -> str:
     """Renderiza o template HTML de e-mail com os pedidos do dia."""
-    template = _jinja_env.get_template("pedidos.html")
+    template = _jinja_env.get_template("pedidos.tpl")
     return template.render(
         pedidos=pedidos,
         resumo=resumo,

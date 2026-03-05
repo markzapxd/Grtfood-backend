@@ -12,8 +12,9 @@ dependencies = [
     "jinja2>=3.1",
     "python-dotenv>=1.0",
     "pandas>=2.0",
-    "aiosqlite>=0.20",
     "psycopg2-binary>=2.9.9",
+    "python-jose[cryptography]>=3.3",
+    "passlib[bcrypt]>=1.7",
 ]
 
 [tool.setuptools.packages.find]

@@ -24,8 +24,14 @@ class Settings(BaseSettings):
     mail_smtp_password: str = ""
     mail_to: str = ""
 
-    # Banco de dados (PostgreSQL no Railway)
-    database_url: str = "postgresql://postgres:xLFTqjkaPQSoIwIYLpWxSKZICgDpenet@gondola.proxy.rlwy.net:28480/railway"
+    # Banco de dados (PostgreSQL)
+    database_url: str = "postgresql://postgres:postgres@localhost:5432/grtfood"
+
+    # Auth / Tokens
+    secret_key: str = "troca_pra_uma_chave_secreta_forte"
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 15
+    refresh_token_expire_days: int = 7
 
     # CORS
     cors_origins: str = "http://localhost:3000"

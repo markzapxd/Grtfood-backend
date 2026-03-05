@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+.venv/
+venv/
+.git/
+.gitignore
+grtfood_backend.egg-info/
+node_modules/

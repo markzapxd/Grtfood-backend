@@ -84,6 +84,30 @@ class UsuarioCreate(BaseModel):
     ativo: bool = True
 
 
+class UsuarioStatusUpdate(BaseModel):
+    """Atualização de status do usuário (ativo/inativo)."""
+
+    ativo: bool
+
+
+class AutoPedidoSemanalCreate(BaseModel):
+    """Ativa pedido automático semanal para um usuário."""
+
+    usuario_id: int
+
+
+class AutoPedidoSemanalResponse(BaseModel):
+    """Configuração de pedido automático semanal retornada pela API."""
+
+    id: int
+    usuario_id: int
+    usuario_nome: str
+    ativo: bool
+    semana_referencia: date
+    criado_em: datetime
+    atualizado_em: datetime
+
+
 # ─── Estado ─────────────────────────────────────────────────
 
 class EstadoResponse(BaseModel):
